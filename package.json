@@ -1,0 +1,19 @@
+{
+  "name": "nft-argus",
+  "version": "0.0.1",
+  "description": "price detection vs rarity",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aurelien-moreau/nft-argus.git"
+  },
+  "author": "aurelien moreau",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aurelien-moreau/nft-argus/issues"
+  },
+  "homepage": "https://github.com/aurelien-moreau/nft-argus#readme"
+}
