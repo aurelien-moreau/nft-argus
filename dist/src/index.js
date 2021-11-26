@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
 const nft_attributes_1 = require("./models/nft-attributes");
 const nft_item_1 = require("./models/nft-item");
+const attributes_rarity_json_1 = __importDefault(require("../attributes-rarity.json"));
 function parseAttributes(attrs) {
     const result = new nft_attributes_1.NftAttributes();
     const entries = attrs.split(",");
@@ -53,6 +54,9 @@ function parseAttributes(attrs) {
             case "Piercing":
                 result.piercing = value;
                 break;
+            case "Specials":
+                result.specials = value;
+                break;
             default:
                 return null;
         }
@@ -83,14 +87,34 @@ function parseItems(items) {
     });
     return results;
 }
+function setRarity(items) {
+    items
+        .forEach(item => {
+        let nftRarity = null;
+        for (const attrName of Object.keys(attributes_rarity_json_1.default)) {
+            const attrValue = item.attributes[attrName];
+            let attrRarity = attributes_rarity_json_1.default[attrName][attrValue || 'None'];
+            //if (!attrRarity){
+            //console.log(`Rarity of ${attrName} is ${attrRarity} ${attrValue}`);
+            // }
+            nftRarity == null ? nftRarity = attrRarity : nftRarity = nftRarity * attrRarity;
+            item.name;
+        }
+        //console.log(`Rarity of ${item.name} is  ${nftRarity} `);
+        item.rarity = nftRarity;
+    });
+}
 function getNftSalesInfo() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const response = yield axios_1.default.get('https://qzlsklfacc.medianetwork.cloud/nft_for_sale?collection=babolex');
             const items = response.data;
             const nftItems = parseItems(items);
-            console.log(nftItems.length);
-            console.log(nftItems[3]);
+            //  console.log(nftItems.length);
+            // console.log(nftItems[4]);
+            setRarity(nftItems);
+            let sortedRarity = nftItems.sort((first, second) => 0 - (first.rarity > second.rarity ? -1 : 1));
+            console.log(sortedRarity[1]);
         }
         catch (error) {
             console.error(error);

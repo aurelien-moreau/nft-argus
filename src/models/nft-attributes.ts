@@ -1,4 +1,5 @@
 export class NftAttributes {
+    [x: string]: any;
 
     background: string;
     skin: string;

@@ -1,6 +1,8 @@
 import axios from "axios";
 import { NftAttributes } from "./models/nft-attributes";
 import { NftItem } from "./models/nft-item";
+import attributesRarity from '../attributes-rarity.json';
+import { SSL_OP_SSLREF2_REUSE_CERT_TYPE_BUG } from "constants";
 
 function parseAttributes(attrs: string): NftAttributes | null {
     const result: NftAttributes = new NftAttributes();
@@ -41,6 +43,9 @@ function parseAttributes(attrs: string): NftAttributes | null {
             case "Piercing":
                 result.piercing = value;
                 break;
+            case "Specials":
+                result.specials = value;
+                break;
             default:
                 return null;
         }
@@ -77,6 +82,26 @@ function parseItems(items: any[]): NftItem[] {
     return results;
 }
 
+function setRarity(items: NftItem[]) {
+    items
+    .forEach(item => {
+        let nftRarity = null;
+        for (const attrName of Object.keys(attributesRarity)) {
+            const attrValue = item.attributes[attrName];
+            let attrRarity = attributesRarity[attrName][attrValue || 'None'];
+            //if (!attrRarity){
+            //console.log(`Rarity of ${attrName} is ${attrRarity} ${attrValue}`);
+           // }
+            nftRarity == null ? nftRarity = attrRarity : nftRarity = nftRarity * attrRarity;
+            item.name
+        }
+        //console.log(`Rarity of ${item.name} is  ${nftRarity} `);
+        item.rarity = nftRarity;
+    }
+    );
+                
+} 
+
 async function getNftSalesInfo() {
     try {
         const response = await axios.get('https://qzlsklfacc.medianetwork.cloud/nft_for_sale?collection=babolex');
@@ -84,9 +109,13 @@ async function getNftSalesInfo() {
         
         
         const nftItems = parseItems(items);
-        console.log(nftItems.length);
-        console.log(nftItems[0]);
-        
+      //  console.log(nftItems.length);
+       // console.log(nftItems[4]);
+        setRarity(nftItems);
+
+        let sortedRarity = nftItems.sort((first, second) => 0 - (first.rarity > second.rarity ? -1 : 1));
+        console.log(sortedRarity[1]);
+
     } catch (error) {
         console.error(error);
     }
