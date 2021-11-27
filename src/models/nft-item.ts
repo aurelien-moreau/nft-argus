@@ -16,4 +16,7 @@ export class NftItem {
     ranking: any;
     lastSoldPrice: any;
     rarity: number;
+    rankPrice: number;
+    rankRarity: number;
+    rankIndicator: number;
 }

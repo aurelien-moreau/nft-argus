@@ -104,6 +104,19 @@ function setRarity(items) {
         item.rarity = nftRarity;
     });
 }
+function setRankIndicator(items) {
+    let sortedRarity = [...items];
+    sortedRarity.sort((first, second) => 0 - (first.rarity > second.rarity ? -1 : 1));
+    let sortedPrice = [...items];
+    sortedPrice.sort((first, second) => 0 - (first.price < second.price ? -1 : 1));
+    // sortedRarity.forEach(item => {console.log(`${item.name} ${item.price}`)});
+    items
+        .forEach(item => {
+        item.rankRarity = sortedRarity.findIndex(x => x.id === item.id);
+        item.rankPrice = sortedPrice.findIndex(x => x.id === item.id);
+        item.rankIndicator = item.rankPrice - item.rankRarity;
+    });
+}
 function getNftSalesInfo() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -113,8 +126,14 @@ function getNftSalesInfo() {
             //  console.log(nftItems.length);
             // console.log(nftItems[4]);
             setRarity(nftItems);
-            let sortedRarity = nftItems.sort((first, second) => 0 - (first.rarity > second.rarity ? -1 : 1));
-            console.log(sortedRarity[1]);
+            setRankIndicator(nftItems);
+            let sortedIndicator = nftItems.sort((first, second) => 0 - (first.rankIndicator < second.rankIndicator ? -1 : 1));
+            sortedIndicator
+                .forEach(item => {
+                console.log(`${item.name},${item.rankIndicator},${item.rankPrice},${item.rankRarity}`);
+            });
+            // maxPrice = Math.max.apply(Math, sortedRarity.map(function(o) {return o.price;}))
+            // console.log(`${maxPrice}`);
         }
         catch (error) {
             console.error(error);
