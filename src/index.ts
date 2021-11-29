@@ -154,12 +154,9 @@ async function getNftSalesInfo(): Promise<NftItem[]>{
 
 
 const app = express();
-app.get('/', (req, res) => {
-
-    getNftSalesInfo().then((value) => res.send(value));
-    //let nftarray = nftdata
-   // console.log(`${nftIt[1].name}`);
-    //res.send(`Hello`);
+app.get('/', async (req, res) => {
+    const value = await getNftSalesInfo();
+    res.send(value);
 });
 
 
