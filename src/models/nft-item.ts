@@ -13,7 +13,6 @@ export class NftItem {
     attributes: NftAttributes;
     skin: any;
     type: string;
-    ranking: any;
     lastSoldPrice: any;
     rarity: number;
     rankPrice: number;

@@ -16,6 +16,7 @@ const axios_1 = __importDefault(require("axios"));
 const nft_attributes_1 = require("./models/nft-attributes");
 const nft_item_1 = require("./models/nft-item");
 const attributes_rarity_json_1 = __importDefault(require("../attributes-rarity.json"));
+const express_1 = __importDefault(require("express"));
 function parseAttributes(attrs) {
     const result = new nft_attributes_1.NftAttributes();
     const entries = attrs.split(",");
@@ -81,7 +82,6 @@ function parseItems(items) {
         nft.sellerAddress = item.seller_address;
         nft.skin = item.skin;
         nft.type = item.type;
-        nft.ranking = item.ranking;
         nft.lastSoldPrice = item.lastSoldPrice;
         results.push(nft);
     });
@@ -127,10 +127,11 @@ function getNftSalesInfo() {
             // console.log(nftItems[4]);
             setRarity(nftItems);
             setRankIndicator(nftItems);
+            return nftItems;
             let sortedIndicator = nftItems.sort((first, second) => 0 - (first.rankIndicator < second.rankIndicator ? -1 : 1));
             sortedIndicator
                 .forEach(item => {
-                console.log(`${item.name},${item.rankIndicator},${item.rankPrice},${item.rankRarity}`);
+                console.log(`${item.name}, RankIndice: ${item.rankIndicator}, RankPrice: ${item.rankPrice}, RankRarity: ${item.rankRarity}`);
             });
             // maxPrice = Math.max.apply(Math, sortedRarity.map(function(o) {return o.price;}))
             // console.log(`${maxPrice}`);
@@ -140,5 +141,14 @@ function getNftSalesInfo() {
         }
     });
 }
-(() => __awaiter(void 0, void 0, void 0, function* () { return yield getNftSalesInfo(); }))();
+//(async () => await getNftSalesInfo())();
+const app = (0, express_1.default)();
+app.get('/', (req, res) => {
+    getNftSalesInfo().then((value) => res.send(value));
+    //let nftarray = nftdata
+    // console.log(`${nftIt[1].name}`);
+    //res.send(`Hello`);
+});
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`App listening on PORT ${port}`));
 //# sourceMappingURL=index.js.map

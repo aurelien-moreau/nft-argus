@@ -2,7 +2,7 @@ import axios from "axios";
 import { NftAttributes } from "./models/nft-attributes";
 import { NftItem } from "./models/nft-item";
 import attributesRarity from '../attributes-rarity.json';
-
+import express from "express";
 
 function parseAttributes(attrs: string): NftAttributes | null {
     const result: NftAttributes = new NftAttributes();
@@ -74,7 +74,6 @@ function parseItems(items: any[]): NftItem[] {
         nft.sellerAddress = item.seller_address;
         nft.skin = item.skin;
         nft.type = item.type;
-        nft.ranking = item.ranking;
         nft.lastSoldPrice = item.lastSoldPrice;
         results.push(nft);
     });
@@ -118,7 +117,7 @@ function setRankIndicator(items: NftItem[]) {
     })
 }
 
-async function getNftSalesInfo() {
+async function getNftSalesInfo(): Promise<NftItem[]>{
     try {
         const response = await axios.get('https://qzlsklfacc.medianetwork.cloud/nft_for_sale?collection=babolex');
         const items = response.data;
@@ -131,11 +130,12 @@ async function getNftSalesInfo() {
 
         setRankIndicator(nftItems);
 
+        return nftItems;
         let sortedIndicator = nftItems.sort((first, second) => 0 - (first.rankIndicator < second.rankIndicator ? -1 : 1));
    
         sortedIndicator
         .forEach(item => {
-            console.log(`${item.name},${item.rankIndicator},${item.rankPrice},${item.rankRarity}`)
+            console.log(`${item.name}, RankIndice: ${item.rankIndicator}, RankPrice: ${item.rankPrice}, RankRarity: ${item.rankRarity}`)
         });
         
     
@@ -149,5 +149,20 @@ async function getNftSalesInfo() {
 
 }
 
-(async () => await getNftSalesInfo())();
+//(async () => await getNftSalesInfo())();
 
+
+
+const app = express();
+app.get('/', (req, res) => {
+
+    getNftSalesInfo().then((value) => res.send(value));
+    //let nftarray = nftdata
+   // console.log(`${nftIt[1].name}`);
+    //res.send(`Hello`);
+});
+
+
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => console.log(`App listening on PORT ${port}`));
