@@ -17,6 +17,7 @@ const nft_attributes_1 = require("./models/nft-attributes");
 const nft_item_1 = require("./models/nft-item");
 const attributes_rarity_json_1 = __importDefault(require("../attributes-rarity.json"));
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 function parseAttributes(attrs) {
     const result = new nft_attributes_1.NftAttributes();
     const entries = attrs.split(",");
@@ -143,6 +144,15 @@ function getNftSalesInfo() {
 }
 //(async () => await getNftSalesInfo())();
 const app = (0, express_1.default)();
+// Add a list of allowed origins.
+// If you have more origins you would like to add, you can add them to the array below.
+const allowedOrigins = ['http://localhost:4200'];
+const options = {
+    origin: allowedOrigins
+};
+//app.use(cors); /* NEW */
+app.use((0, cors_1.default)(options));
+app.use(express_1.default.json());
 app.get('/', (req, res) => {
     getNftSalesInfo().then((value) => res.send(value));
     //let nftarray = nftdata

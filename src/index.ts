@@ -3,6 +3,7 @@ import { NftAttributes } from "./models/nft-attributes";
 import { NftItem } from "./models/nft-item";
 import attributesRarity from '../attributes-rarity.json';
 import express from "express";
+import cors from 'cors';
 
 function parseAttributes(attrs: string): NftAttributes | null {
     const result: NftAttributes = new NftAttributes();
@@ -154,6 +155,22 @@ async function getNftSalesInfo(): Promise<NftItem[]>{
 
 
 const app = express();
+
+
+
+// Add a list of allowed origins.
+// If you have more origins you would like to add, you can add them to the array below.
+const allowedOrigins = ['http://localhost:4200'];
+
+const options: cors.CorsOptions = {
+  origin: allowedOrigins
+};
+
+//app.use(cors); /* NEW */
+app.use(cors(options));
+app.use(express.json());
+
+
 app.get('/', (req, res) => {
 
     getNftSalesInfo().then((value) => res.send(value));
@@ -166,3 +183,4 @@ app.get('/', (req, res) => {
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => console.log(`App listening on PORT ${port}`));
+
